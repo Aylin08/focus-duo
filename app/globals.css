@@ -2,10 +2,10 @@
 
 @layer base {
   body {
-    background-color: #f7f5f0;
-    color: #2d3748;
+    background-color: #faf8f5;
+    color: #1e293b;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
@@ -16,58 +16,99 @@
   line-height: 1.6 !important;
 }
 
-/* REGLAS ESTRICTAS PARA MODO ALTO CONTRASTE */
+/* =========================================================
+   MODO ALTO CONTRASTE DEFINITIVO
+   ========================================================= */
+
+/* Fondo general de la aplicación */
 .high-contrast {
   background-color: #0b0f19 !important;
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
-/* Secciones principales en modo oscuro */
-.high-contrast section {
+/* Secciones, headers y barras principales */
+.high-contrast section,
+.high-contrast header,
+.high-contrast [class*="bg-stone-200"] {
   background-color: #111827 !important;
   border-color: #374151 !important;
 }
 
-/* Títulos y textos generales */
-.high-contrast h1,
-.high-contrast h2,
-.high-contrast h3,
-.high-contrast label,
-.high-contrast .title-text {
-  color: #ffffff !important;
-}
-
-.high-contrast p,
-.high-contrast span {
-  color: #e2e8f0 !important;
-}
-
-/* Forzar legibilidad en minitarjetas y cajas de sugerencias */
-.high-contrast .bg-white\/90,
-.high-contrast .bg-stone-100\/80,
-.high-contrast .bg-stone-50,
-.high-contrast .bg-amber-50\/90,
-.high-contrast .bg-purple-100\/60,
-.high-contrast .bg-emerald-100\/80,
-.high-contrast .bg-amber-100\/80,
-.high-contrast .bg-rose-100\/80 {
+/* RECUADROS INTERNOS, TARJETAS Y CONTENEDORES (Forzar a fondo oscuro) */
+.high-contrast div[class*="bg-"],
+.high-contrast article[class*="bg-"],
+.high-contrast section[class*="bg-"] {
   background-color: #1f2937 !important;
   border-color: #4b5563 !important;
 }
 
-/* Asegurar que las etiquetas dentro de botones e insignias pastel en modo oscuro tengan texto legible */
-.high-contrast button span,
-.high-contrast .bg-emerald-100 span,
-.high-contrast .bg-amber-100 span,
-.high-contrast .bg-rose-100 span,
-.high-contrast .bg-indigo-100 span,
-.high-contrast .bg-cyan-100 span,
-.high-contrast .bg-yellow-100 span,
-.high-contrast .bg-purple-100 span {
-  color: #1e293b !important;
+/* MENÚS DESPLEGABLES (SELECT) E INPUTS EN ALTO CONTRASTE */
+.high-contrast select,
+.high-contrast input,
+.high-contrast option {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  border: 1px solid #6b7280 !important;
+}
+
+/* TÍTULOS EN BLANCO PURÍSIMO */
+.high-contrast h1,
+.high-contrast h2,
+.high-contrast h3,
+.high-contrast h4,
+.high-contrast strong,
+.high-contrast b,
+.high-contrast .font-bold,
+.high-contrast .font-extrabold {
+  color: #ffffff !important;
+}
+
+/* TEXTOS Y PÁRRAFOS EN GRIS CLARO DE ALTA VISIBILIDAD */
+.high-contrast p,
+.high-contrast span,
+.high-contrast label,
+.high-contrast div,
+.high-contrast [class*="text-"] {
+  color: #e2e8f0 !important;
+}
+
+/* BOTONES INACTIVOS */
+.high-contrast button {
+  background-color: #374151 !important;
+  border: 1px solid #6b7280 !important;
+  color: #ffffff !important;
+}
+
+/* BOTONES ACTIVOS O DESTACADOS (Azul cobalto) */
+.high-contrast button.bg-amber-400,
+.high-contrast button.bg-blue-600,
+.high-contrast button.scale-105,
+.high-contrast button.ring-2,
+.high-contrast button[class*="bg-teal"] {
+  background-color: #2563eb !important;
+  border-color: #60a5fa !important;
+  color: #ffffff !important;
+}
+
+/* ICONOS VECTORIALES SVG */
+.high-contrast svg {
+  color: #38bdf8 !important;
 }
 
 .reduce-motion * {
   animation: none !important;
   transition: none !important;
+}
+/* Etiqueta del Header en Alto Contraste */
+.high-contrast header span[class*="bg-"],
+.high-contrast header div[class*="bg-"] {
+  background-color: #1f2937 !important;
+  border: 1px solid #38bdf8 !important;
+  color: #38bdf8 !important;
+}
+/* O bien, si prefieres que la tarjeta sea oscura con texto blanco */
+.high-contrast .high-contrast-dark-item {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  border: 1px solid #4b5563 !important;
 }
