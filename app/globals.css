@@ -16,99 +16,166 @@
   line-height: 1.6 !important;
 }
 
-/* =========================================================
-   MODO ALTO CONTRASTE DEFINITIVO
-   ========================================================= */
-
-/* Fondo general de la aplicación */
-.high-contrast {
-  background-color: #0b0f19 !important;
-  color: #ffffff !important;
-}
-
-/* Secciones, headers y barras principales */
-.high-contrast section,
-.high-contrast header,
-.high-contrast [class*="bg-stone-200"] {
-  background-color: #111827 !important;
-  border-color: #374151 !important;
-}
-
-/* RECUADROS INTERNOS, TARJETAS Y CONTENEDORES (Forzar a fondo oscuro) */
-.high-contrast div[class*="bg-"],
-.high-contrast article[class*="bg-"],
-.high-contrast section[class*="bg-"] {
-  background-color: #1f2937 !important;
-  border-color: #4b5563 !important;
-}
-
-/* MENÚS DESPLEGABLES (SELECT) E INPUTS EN ALTO CONTRASTE */
-.high-contrast select,
-.high-contrast input,
-.high-contrast option {
-  background-color: #1f2937 !important;
-  color: #ffffff !important;
-  border: 1px solid #6b7280 !important;
-}
-
-/* TÍTULOS EN BLANCO PURÍSIMO */
-.high-contrast h1,
-.high-contrast h2,
-.high-contrast h3,
-.high-contrast h4,
-.high-contrast strong,
-.high-contrast b,
-.high-contrast .font-bold,
-.high-contrast .font-extrabold {
-  color: #ffffff !important;
-}
-
-/* TEXTOS Y PÁRRAFOS EN GRIS CLARO DE ALTA VISIBILIDAD */
-.high-contrast p,
-.high-contrast span,
-.high-contrast label,
-.high-contrast div,
-.high-contrast [class*="text-"] {
-  color: #e2e8f0 !important;
-}
-
-/* BOTONES INACTIVOS */
-.high-contrast button {
-  background-color: #374151 !important;
-  border: 1px solid #6b7280 !important;
-  color: #ffffff !important;
-}
-
-/* BOTONES ACTIVOS O DESTACADOS (Azul cobalto) */
-.high-contrast button.bg-amber-400,
-.high-contrast button.bg-blue-600,
-.high-contrast button.scale-105,
-.high-contrast button.ring-2,
-.high-contrast button[class*="bg-teal"] {
-  background-color: #2563eb !important;
-  border-color: #60a5fa !important;
-  color: #ffffff !important;
-}
-
-/* ICONOS VECTORIALES SVG */
-.high-contrast svg {
-  color: #38bdf8 !important;
-}
-
+/* Reducir animaciones */
 .reduce-motion * {
   animation: none !important;
   transition: none !important;
 }
-/* Etiqueta del Header en Alto Contraste */
-.high-contrast header span[class*="bg-"],
-.high-contrast header div[class*="bg-"] {
-  background-color: #1f2937 !important;
-  border: 1px solid #38bdf8 !important;
-  color: #38bdf8 !important;
+
+/* =========================================================
+   1. MODO NORMAL / CLARO (Barra de Accesibilidad Fina)
+   ========================================================= */
+
+/* Forzar la barra de accesibilidad clara cuando no es alto contraste */
+body:not(.high-contrast) div.bg-stone-200\/90,
+body:not(.high-contrast) div[class*="bg-stone-200"] {
+  background-color: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
 }
-/* O bien, si prefieres que la tarjeta sea oscura con texto blanco */
-.high-contrast .high-contrast-dark-item {
-  background-color: #1f2937 !important;
+
+body:not(.high-contrast) div.bg-stone-200\/90 *,
+body:not(.high-contrast) div[class*="bg-stone-200"] * {
+  color: #0f172a !important;
+}
+
+body:not(.high-contrast) div.bg-stone-200\/90 button,
+body:not(.high-contrast) div[class*="bg-stone-200"] button {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* =========================================================
+   2. MODO ALTO CONTRASTE DEFINITIVO
+   ========================================================= */
+
+body.high-contrast,
+.high-contrast,
+main.high-contrast {
+  background-color: #080c14 !important;
   color: #ffffff !important;
-  border: 1px solid #4b5563 !important;
+}
+
+/* Encabezado Principal y Badges */
+.high-contrast header h1,
+.high-contrast header p {
+  color: #ffffff !important;
+}
+
+.high-contrast header span[class*="bg-emerald-"],
+.high-contrast header span[class*="bg-teal-"] {
+  background-color: #064e3b !important;
+  color: #6ee7b7 !important;
+  border: 1px solid #10b981 !important;
+}
+
+/* Barra de Accesibilidad en Alto Contraste */
+.high-contrast div.bg-stone-200\/90,
+.high-contrast div[class*="bg-stone-200"] {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+.high-contrast div.bg-stone-200\/90 *,
+.high-contrast div[class*="bg-stone-200"] * {
+  color: #ffffff !important;
+}
+
+.high-contrast div.bg-stone-200\/90 button,
+.high-contrast div[class*="bg-stone-200"] button {
+  background-color: #1e293b !important;
+  border: 1px solid #475569 !important;
+  color: #ffffff !important;
+}
+
+/* Tarjetas Principales Contenedoras */
+.high-contrast section,
+.high-contrast .bg-white,
+.high-contrast .bg-white\/90,
+.high-contrast .bg-white\/80 {
+  background-color: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* Selector de Grado (Dropdown) */
+.high-contrast select,
+.high-contrast input,
+.high-contrast option {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  border: 1px solid #475569 !important;
+}
+
+/* Textos Generales y Subtítulos */
+.high-contrast h1,
+.high-contrast h2,
+.high-contrast h3,
+.high-contrast h4,
+.high-contrast p,
+.high-contrast span,
+.high-contrast label,
+.high-contrast strong,
+.high-contrast b {
+  color: #ffffff !important;
+}
+
+.high-contrast .text-stone-500,
+.high-contrast .text-stone-600,
+.high-contrast .text-stone-700,
+.high-contrast .text-slate-500,
+.high-contrast .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+/* Cajas Internas (2° Primaria, Salud, Rutina del Día) */
+.high-contrast div[class*="bg-stone-"],
+.high-contrast div[class*="bg-gray-"],
+.high-contrast div[class*="bg-amber-"],
+.high-contrast div[class*="bg-teal-"],
+.high-contrast div[class*="bg-slate-"] {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* Semáforo Sensorial */
+.high-contrast button[class*="Regulado"],
+.high-contrast button[class*="Sobrecarga"] {
+  background-color: #1e293b !important;
+  border: 1px solid #475569 !important;
+  color: #ffffff !important;
+}
+
+.high-contrast button[class*="Regulado"] *,
+.high-contrast button[class*="Sobrecarga"] * {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Caja de sugerencia en Semáforo */
+.high-contrast .bg-rose-50,
+.high-contrast .bg-rose-50\/80,
+.high-contrast div[class*="bg-rose-"] {
+  background-color: #2c121d !important;
+  border: 1px solid #f43f5e !important;
+}
+
+.high-contrast div[class*="bg-rose-"] p,
+.high-contrast div[class*="bg-rose-"] span,
+.high-contrast div[class*="bg-rose-"] h4 {
+  color: #fecdd3 !important;
+  opacity: 1 !important;
+}
+
+/* APOYOS VISUALES (AAC) - Texto oscuro en botones pastel */
+.high-contrast .grid button,
+.high-contrast .grid button *,
+.high-contrast .grid button span,
+.high-contrast .grid button p,
+.high-contrast .grid button div {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+  font-weight: 800 !important;
 }

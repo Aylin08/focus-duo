@@ -10,6 +10,7 @@ import { HealthTracker } from '../components/HealthTracker';
 import { SensoryTrafficLight } from '../components/SensoryTrafficLight';
 import { VisualSupports } from '../components/VisualSupports';
 import { TaskList } from '../components/TaskList';
+import { SensorTimer } from '../components/SensorTimer'; // 1. Importación agregada
 
 export default function Home() {
   const [selectedGrade, setSelectedGrade] = useState('1er-grado');
@@ -19,31 +20,32 @@ export default function Home() {
   const [isHighContrast, setIsHighContrast] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  // Cargar grado guardado al iniciar
   useEffect(() => {
     const savedGrade = localStorage.getItem('aula_selectedGrade');
-    if (savedGrade && GRADE_DATA[savedGrade]) {
+    if (savedGrade && (GRADE_DATA as Record<string, any>)[savedGrade]) {
       setSelectedGrade(savedGrade);
     }
   }, []);
 
-  // Guardar grado cuando cambie
   const handleSelectGrade = (gradeKey: string) => {
     setSelectedGrade(gradeKey);
     localStorage.setItem('aula_selectedGrade', gradeKey);
   };
 
-  const currentGradeInfo = GRADE_DATA[selectedGrade];
+  const handleToggleTask = (taskId: string | number) => {
+    console.log('Tarea conmutada:', taskId);
+  };
 
-  const accessibilityClasses = [
-    'min-h-screen p-4 sm:p-6 transition-colors duration-300',
-    isHighContrast ? 'high-contrast' : 'bg-[#f7f5f0] text-stone-800',
-    isDyslexic ? 'dyslexia-font' : 'font-sans',
-    reduceMotion ? 'reduce-motion' : '',
-  ].join(' ');
+  const currentGradeInfo: any = (GRADE_DATA as Record<string, any>)[selectedGrade] || {};
 
   return (
-    <main className={accessibilityClasses}>
+    <main 
+      className={`min-h-screen p-4 sm:p-6 transition-colors duration-300 ${
+        isHighContrast 
+          ? 'high-contrast bg-slate-950 text-white' 
+          : 'bg-[#f7f5f0] text-stone-800'
+      } ${isDyslexic ? 'dyslexia-font' : 'font-sans'} ${reduceMotion ? 'reduce-motion' : ''}`}
+    >
       {/* Encabezado */}
       <Header />
 
@@ -53,8 +55,8 @@ export default function Home() {
         setIsDyslexic={setIsDyslexic}
         isHighContrast={isHighContrast}
         setIsHighContrast={setIsHighContrast}
-        reduceMotion={reduceMotion}
-        setReduceMotion={setReduceMotion}
+        isReducedMotion={reduceMotion}
+        setIsReducedMotion={setReduceMotion}
       />
 
       {/* Selector de Grados */}
@@ -63,19 +65,30 @@ export default function Home() {
         onSelectGrade={handleSelectGrade}
       />
 
-      {/* Grid Principal */}
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-        <GradeInfoCard
-          gradeInfo={currentGradeInfo}
-          studentStatus="En jornada escolar / sesión 📚"
-        />
-        <HealthTracker />
-        <SensoryTrafficLight />
-        <VisualSupports />
-        <TaskList
-          gradeLabel={currentGradeInfo.label}
-          tasks={currentGradeInfo.tasks}
-        />
+      {/* Contenido Principal */}
+      <div className="max-w-4xl mx-auto space-y-5 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
+          <GradeInfoCard
+            gradeInfo={currentGradeInfo}
+            studentStatus="En jornada escolar / sesión 📚"
+          />
+          <HealthTracker isHighContrast={isHighContrast} />
+          <SensoryTrafficLight isHighContrast={isHighContrast} />
+          
+          {/* 2. Temporizador Sensorial agregado en la grilla */}
+          <SensorTimer isHighContrast={isHighContrast} />
+
+          <TaskList 
+            gradeTitle={currentGradeInfo?.label || selectedGrade} 
+            tasks={currentGradeInfo?.tasks || currentGradeInfo?.rutina}
+            onToggleTask={handleToggleTask}
+          />
+        </div>
+
+        {/* Apoyos Visuales */}
+        <div className="w-full">
+          <VisualSupports isHighContrast={isHighContrast} />
+        </div>
       </div>
     </main>
   );

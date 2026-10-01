@@ -1,88 +1,146 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { HeartPulse, Droplet, Wind } from 'lucide-react';
+import { Heart, Wind, Droplet, Plus, RotateCcw } from 'lucide-react';
 
-export const HealthTracker: React.FC = () => {
-  const [waterGlasses, setWaterGlasses] = useState(0);
-  const [isBreathing, setIsBreathing] = useState(false);
-  const [breathPhase, setBreathPhase] = useState<'Inhala' | 'Sostén' | 'Exhala' | 'Listo'>('Listo');
+type BreathPhase = 'Inhala' | 'Sostén' | 'Exhala' | 'Listo';
 
+interface HealthTrackerProps {
+  isHighContrast?: boolean;
+}
+
+export const HealthTracker: React.FC<HealthTrackerProps> = ({
+  isHighContrast = false,
+}) => {
+  const [waterGlasses, setWaterGlasses] = useState<number>(0);
+  const [isBreathing, setIsBreathing] = useState<boolean>(false);
+  const [breathPhase, setBreathPhase] = useState<BreathPhase>('Listo');
+
+  // Cargar agua persistida
   useEffect(() => {
-    const savedGlasses = localStorage.getItem('aula_waterGlasses');
-    if (savedGlasses !== null) {
-      setWaterGlasses(Number(savedGlasses));
+    const savedWater = localStorage.getItem('aula_waterGlasses');
+    if (savedWater !== null) {
+      setWaterGlasses(parseInt(savedWater, 10) || 0);
     }
   }, []);
 
-  const handleAddWater = () => {
-    const newCount = waterGlasses + 1;
-    setWaterGlasses(newCount);
-    localStorage.setItem('aula_waterGlasses', newCount.toString());
+  // Secuencia de respiración vagal (4s Inhala, 4s Sostén, 4s Exhala = 12s)
+  useEffect(() => {
+    if (!isBreathing) return;
+
+    setBreathPhase('Inhala');
+
+    const timer1 = setTimeout(() => {
+      setBreathPhase('Sostén');
+    }, 4000);
+
+    const timer2 = setTimeout(() => {
+      setBreathPhase('Exhala');
+    }, 8000);
+
+    const timer3 = setTimeout(() => {
+      setIsBreathing(false);
+      setBreathPhase('Listo');
+    }, 12000);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [isBreathing]);
+
+  const addWaterGlass = () => {
+    const updated = waterGlasses + 1;
+    setWaterGlasses(updated);
+    localStorage.setItem('aula_waterGlasses', updated.toString());
   };
 
-  const handleResetWater = () => {
+  const resetWater = () => {
     setWaterGlasses(0);
     localStorage.setItem('aula_waterGlasses', '0');
   };
 
-  useEffect(() => {
-    if (isBreathing) {
-      setBreathPhase('Inhala');
-      
-      const timer1 = setTimeout(() => setBreathPhase('Sostén'), 4000);
-      const timer2 = setTimeout(() => setBreathPhase('Exhala'), 8000);
-      const timer3 = setTimeout(() => {
-        setBreathPhase('Listo');
-        setIsBreathing(false);
-      }, 12000);
-
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        clearTimeout(timer3);
-      };
-    }
-  }, [isBreathing]);
-
   return (
-    <section className="bg-white/90 border border-stone-200/80 rounded-3xl p-5 shadow-sm">
-      <div className="flex justify-between items-start mb-4">
+    <section
+      className={`border rounded-3xl p-5 shadow-sm transition-colors ${
+        isHighContrast
+          ? 'bg-slate-900 border-slate-700 text-white'
+          : 'bg-white/90 border-stone-200/80 text-stone-800'
+      }`}
+    >
+      {/* Encabezado */}
+      <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-lg font-bold text-stone-800">Salud, Hidratación & Calma</h2>
-          <p className="text-xs text-stone-500 font-medium">Prevención de fatiga, disautonomía y autorregulación</p>
+          <h2 className={`text-lg font-bold ${isHighContrast ? 'text-white' : 'text-stone-800'}`}>
+            Salud, Hidratación & Calma
+          </h2>
+          <p className={`text-xs ${isHighContrast ? 'text-slate-400' : 'text-stone-500'}`}>
+            Prevención de fatiga, disautonomía y autorregulación
+          </p>
         </div>
-        <HeartPulse className="w-6 h-6 text-rose-500" />
+        <Heart className="w-5 h-5 text-rose-500 fill-rose-100" />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Registro de Hidratación */}
-        <div className="bg-amber-50/90 border border-amber-200/70 p-4 rounded-2xl flex flex-col justify-between items-center text-center">
-          <div className="w-full flex justify-between items-center">
-            <p className="text-xs font-semibold text-stone-700">Toma de Agua / Electrolitos</p>
-            {waterGlasses > 0 && (
-              <button
-                onClick={handleResetWater}
-                className="text-[10px] text-stone-500 hover:text-stone-800 underline cursor-pointer"
-              >
-                Reset
-              </button>
-            )}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Tarjeta Toma de Agua / Electrolitos */}
+        <div
+          className={`p-4 rounded-2xl border flex flex-col justify-between items-center text-center transition-all ${
+            isHighContrast
+              ? 'bg-slate-800/90 border-slate-700'
+              : 'bg-amber-50/40 border-amber-200/80'
+          }`}
+        >
+          <p className={`text-xs font-semibold ${isHighContrast ? 'text-slate-300' : 'text-stone-700'}`}>
+            Toma de Agua / Electrolitos
+          </p>
+
+          <div className="my-2">
+            <Droplet className={`w-8 h-8 mx-auto ${isHighContrast ? 'text-sky-400' : 'text-sky-500'}`} />
+            <p className={`text-sm font-extrabold mt-2 ${isHighContrast ? 'text-white' : 'text-stone-900'}`}>
+              {waterGlasses} {waterGlasses === 1 ? 'Vaso Registrado' : 'Vasos Registrados'}
+            </p>
           </div>
-          <div className="my-2 flex flex-col items-center">
-            <Droplet className="w-8 h-8 text-cyan-600 mb-1" />
-            <p className="text-sm font-extrabold text-stone-900">{waterGlasses} Vasos Registrados</p>
+
+          <div className="flex items-center gap-2 w-full">
+            <button
+              onClick={addWaterGlass}
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition cursor-pointer ${
+                isHighContrast
+                  ? 'bg-slate-700 hover:bg-slate-600 text-white border border-slate-600'
+                  : 'bg-stone-200/80 hover:bg-stone-300/80 text-stone-800 border border-stone-300/80'
+              }`}
+            >
+              <Plus className="w-4 h-4" />
+              <span>Registrar Vaso</span>
+            </button>
+
+            <button
+              onClick={resetWater}
+              title="Reiniciar contador"
+              className={`p-2.5 rounded-xl transition cursor-pointer flex items-center justify-center ${
+                isHighContrast
+                  ? 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                  : 'bg-stone-200/80 hover:bg-stone-300/80 text-stone-600'
+              }`}
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
           </div>
-          <button
-            onClick={handleAddWater}
-            className="w-full bg-stone-200 hover:bg-stone-300 text-stone-900 font-bold text-lg rounded-xl py-1 border border-stone-300 transition shadow-xs cursor-pointer"
-          >
-            +
-          </button>
         </div>
 
-        {/* Pausa de Respiración Guiada */}
-        <div className="bg-stone-50/90 border border-stone-200/80 p-4 rounded-2xl flex flex-col justify-between items-center text-center">
-          <p className="text-xs font-semibold text-stone-700">Respiración Vagal Guiada</p>
-          
+        {/* Tarjeta Respiración Vagal Guiada */}
+        <div
+          className={`p-4 rounded-2xl border flex flex-col justify-between items-center text-center transition-all ${
+            isHighContrast
+              ? 'bg-slate-800/90 border-slate-700'
+              : 'bg-stone-50/90 border-stone-200/80'
+          }`}
+        >
+          <p className={`text-xs font-semibold ${isHighContrast ? 'text-slate-300' : 'text-stone-700'}`}>
+            Respiración Vagal Guiada
+          </p>
+
           <div className="my-2 flex flex-col items-center justify-center min-h-[85px]">
             <div
               className={`w-12 h-12 rounded-full border-2 border-teal-500 flex items-center justify-center transition-all duration-[4000ms] ease-in-out ${
@@ -97,7 +155,7 @@ export const HealthTracker: React.FC = () => {
             >
               <Wind className="w-6 h-6 text-teal-700" />
             </div>
-            <p className="text-xs font-bold text-teal-950 mt-2">
+            <p className={`text-xs font-bold mt-2 ${isHighContrast ? 'text-teal-300' : 'text-teal-950'}`}>
               {isBreathing ? `${breathPhase}...` : 'Pausa de 12 segundos'}
             </p>
           </div>

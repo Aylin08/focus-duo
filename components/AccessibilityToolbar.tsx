@@ -1,67 +1,73 @@
 import React from 'react';
+import { Accessibility, Eye, VolumeX, Sparkles } from 'lucide-react';
 
-interface Props {
+interface AccessibilityToolbarProps {
   isDyslexic: boolean;
-  setIsDyslexic: (val: boolean) => void;
+  setIsDyslexic: (value: boolean) => void;
   isHighContrast: boolean;
-  setIsHighContrast: (val: boolean) => void;
-  reduceMotion: boolean;
-  setReduceMotion: (val: boolean) => void;
+  setIsHighContrast: (value: boolean) => void;
+  isReducedMotion: boolean;
+  setIsReducedMotion: (value: boolean) => void;
 }
 
-export const AccessibilityToolbar: React.FC<Props> = ({
+export const AccessibilityToolbar: React.FC<AccessibilityToolbarProps> = ({
   isDyslexic,
   setIsDyslexic,
   isHighContrast,
   setIsHighContrast,
-  reduceMotion,
-  setReduceMotion,
+  isReducedMotion,
+  setIsReducedMotion,
 }) => {
   return (
-    <section className="max-w-4xl mx-auto mt-4">
-      <div className="bg-stone-200/60 border border-stone-300/80 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <span className="font-bold text-stone-700 flex items-center gap-1.5">
-          <span>♿</span> Ajustes de Accesibilidad:
+    
+
+  <div className="w-full bg-slate-200 border border-slate-300 rounded-2xl p-3 mb-6 flex flex-wrap justify-between items-center gap-3 transition-colors">
+      <div className="flex items-center gap-2">
+        <Accessibility className="w-5 h-5 text-indigo-600" />
+        <span className="text-xs font-bold text-slate-800">
+          Ajustes de Accesibilidad:
         </span>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Tipografía Lectura Fácil / Dislexia */}
-          <button
-            onClick={() => setIsDyslexic(!isDyslexic)}
-            className={`px-3 py-1.5 rounded-xl font-medium border transition cursor-pointer ${
-              isDyslexic
-                ? 'bg-amber-300 border-amber-400 text-stone-900 font-bold'
-                : 'bg-white border-stone-300 text-stone-700 hover:bg-stone-100'
-            }`}
-          >
-            {isDyslexic ? '✓ Fuente Dislexia' : 'Fuente Lectura Fácil'}
-          </button>
-
-          {/* Alto Contraste */}
-          <button
-            onClick={() => setIsHighContrast(!isHighContrast)}
-            className={`px-3 py-1.5 rounded-xl font-medium border transition cursor-pointer ${
-              isHighContrast
-                ? 'bg-slate-900 border-slate-700 text-amber-300 font-bold'
-                : 'bg-white border-stone-300 text-stone-700 hover:bg-stone-100'
-            }`}
-          >
-            {isHighContrast ? '✓ Alto Contraste' : 'Alto Contraste'}
-          </button>
-
-          {/* Reducir Animaciones */}
-          <button
-            onClick={() => setReduceMotion(!reduceMotion)}
-            className={`px-3 py-1.5 rounded-xl font-medium border transition cursor-pointer ${
-              reduceMotion
-                ? 'bg-teal-300 border-teal-400 text-teal-950 font-bold'
-                : 'bg-white border-stone-300 text-stone-700 hover:bg-stone-100'
-            }`}
-          >
-            {reduceMotion ? '✓ Sin Movimiento' : 'Reducir Animaciones'}
-          </button>
-        </div>
       </div>
-    </section>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Fuente Dislexia */}
+        <button
+          onClick={() => setIsDyslexic(!isDyslexic)}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+            isDyslexic
+              ? 'bg-amber-400 text-stone-900 border border-amber-500 shadow-xs'
+              : 'bg-white dark:bg-slate-700 text-stone-700 dark:text-slate-200 border border-stone-300 dark:border-slate-600 hover:bg-stone-100 dark:hover:bg-slate-600'
+          }`}
+        >
+          <Eye className="w-3.5 h-3.5" />
+          {isDyslexic ? '✓ Fuente Lectura Fácil' : 'Fuente Lectura Fácil'}
+        </button>
+
+        {/* Alto Contraste */}
+        <button
+          onClick={() => setIsHighContrast(!isHighContrast)}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+            isHighContrast
+              ? 'bg-blue-600 text-white border border-blue-400 shadow-xs'
+              : 'bg-white dark:bg-slate-700 text-stone-700 dark:text-slate-200 border border-stone-300 dark:border-slate-600 hover:bg-stone-100 dark:hover:bg-slate-600'
+          }`}
+        >
+          {isHighContrast ? '✓ Alto Contraste' : 'Alto Contraste'}
+        </button>
+
+        {/* Reducir Animaciones */}
+        <button
+          onClick={() => setIsReducedMotion(!isReducedMotion)}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+            isReducedMotion
+              ? 'bg-amber-400 text-stone-900 border border-amber-500 shadow-xs'
+              : 'bg-white dark:bg-slate-700 text-stone-700 dark:text-slate-200 border border-stone-300 dark:border-stone-600 hover:bg-stone-100 dark:hover:bg-slate-600'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          {isReducedMotion ? '✓ Reducir Animaciones' : 'Reducir Animaciones'}
+        </button>
+      </div>
+    </div>
   );
 };

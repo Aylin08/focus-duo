@@ -24,7 +24,7 @@ export const GRADE_DATA: Record<string, GradeInfo> = {
     ],
   },
   '3er-grado': {
-    label: '3.er de Primaria',
+    label: '3.º de Primaria',
     focus: 'Razonamiento lógico, rutinas de autonomía y socialización.',
     tasks: [
       'Resolución de problemas con apoyos gráficos',
