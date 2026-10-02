@@ -140,20 +140,6 @@ main.high-contrast {
   color: #ffffff !important;
 }
 
-/* Semáforo Sensorial */
-.high-contrast button[class*="Regulado"],
-.high-contrast button[class*="Sobrecarga"] {
-  background-color: #1e293b !important;
-  border: 1px solid #475569 !important;
-  color: #ffffff !important;
-}
-
-.high-contrast button[class*="Regulado"] *,
-.high-contrast button[class*="Sobrecarga"] * {
-  color: #ffffff !important;
-  stroke: #ffffff !important;
-}
-
 /* Caja de sugerencia en Semáforo */
 .high-contrast .bg-rose-50,
 .high-contrast .bg-rose-50\/80,
@@ -177,5 +163,63 @@ main.high-contrast {
 .high-contrast .grid button div {
   color: #0f172a !important;
   stroke: #0f172a !important;
+  font-weight: 800 !important;
+}
+/* =========================================================
+   3. ESTILOS ESPECÍFICOS PARA EL SEMÁFORO SENSORIAL
+   ========================================================= */
+
+/* Botón Regulado activo */
+.high-contrast .bg-emerald-900,
+.high-contrast .bg-emerald-900 button,
+.high-contrast .bg-emerald-900 *,
+.high-contrast button.bg-emerald-900,
+.high-contrast button.bg-emerald-900 * {
+  background-color: #064e3b !important;
+  color: #6ee7b7 !important;
+  stroke: #6ee7b7 !important;
+}
+
+/* Botón Sobrecarga activo */
+.high-contrast .bg-amber-900,
+.high-contrast .bg-amber-900 button,
+.high-contrast .bg-amber-900 *,
+.high-contrast button.bg-amber-900,
+.high-contrast button.bg-amber-900 * {
+  background-color: #78350f !important;
+  color: #fde047 !important;
+  stroke: #fde047 !important;
+}
+
+/* Botón Batería baja activo */
+.high-contrast .bg-rose-900,
+.high-contrast .bg-rose-900 button,
+.high-contrast .bg-rose-900 *,
+.high-contrast button.bg-rose-900,
+.high-contrast button.bg-rose-900 * {
+  background-color: #881337 !important;
+  color: #fda4af !important;
+  stroke: #fda4af !important;
+}
+
+/* Botones NO seleccionados en el semáforo */
+.high-contrast button.bg-slate-800,
+.high-contrast button.bg-slate-800 *,
+.high-contrast button.bg-slate-800 span {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  stroke: #94a3b8 !important;
+}
+/* Correcciones para Salud, Hidratación & Calma en Alto Contraste */
+.high-contrast button[class*="Registrar"],
+.high-contrast button[class*="Registrar"] * {
+  color: #ffffff !important;
+}
+
+.high-contrast button[class*="Respiracion"],
+.high-contrast button[class*="Respiracion"] *,
+.high-contrast button.bg-teal-600,
+.high-contrast button.bg-teal-600 * {
+  color: #0f172a !important; /* Texto oscuro sobre el botón verde brillante */
   font-weight: 800 !important;
 }

@@ -89,57 +89,96 @@ export const SensoryTrafficLight: React.FC<SensoryTrafficLightProps> = ({
       <div className="flex justify-around items-center gap-2 my-4">
         {/* Regulado */}
         <button
+          type="button"
           onClick={() => handleStateChange('regulado')}
           className={`flex-1 py-3 px-2 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
             sensoryState === 'regulado'
               ? isHighContrast
-                ? 'bg-emerald-900 border-emerald-500 ring-2 ring-emerald-400 scale-105 shadow-sm'
+                ? 'bg-emerald-500 border-emerald-300 ring-2 ring-emerald-300 scale-105 shadow-sm'
                 : 'bg-emerald-200 border-emerald-400 ring-2 ring-emerald-300 scale-105 shadow-sm'
               : isHighContrast
-              ? 'bg-slate-800 border-slate-700 opacity-70 hover:opacity-100'
-              : 'bg-stone-100/80 border-stone-200 opacity-70 hover:opacity-100'
+              ? 'bg-slate-800 border-slate-700 hover:bg-slate-700'
+              : 'bg-stone-100/80 border-stone-200 hover:bg-stone-200'
           }`}
         >
-          <Leaf className={`w-6 h-6 ${isHighContrast ? 'text-emerald-300' : 'text-emerald-700'}`} />
-          <span className={`text-[11px] font-extrabold ${isHighContrast ? 'text-white' : 'text-stone-900'}`}>
+          <Leaf
+            className={`w-6 h-6 ${
+              sensoryState === 'regulado'
+                ? isHighContrast ? 'text-slate-950' : 'text-emerald-700'
+                : isHighContrast ? 'text-emerald-400' : 'text-emerald-700'
+            }`}
+          />
+          <span
+            className={`text-[11px] font-extrabold ${
+              sensoryState === 'regulado'
+                ? isHighContrast ? 'text-slate-950' : 'text-stone-900'
+                : isHighContrast ? 'text-white' : 'text-stone-900'
+            }`}
+          >
             Regulado
           </span>
         </button>
 
         {/* Sobrecarga */}
         <button
+          type="button"
           onClick={() => handleStateChange('alerta')}
           className={`flex-1 py-3 px-2 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
             sensoryState === 'alerta'
               ? isHighContrast
-                ? 'bg-amber-900 border-amber-500 ring-2 ring-amber-400 scale-105 shadow-sm'
+                ? 'bg-amber-400 border-amber-200 ring-2 ring-amber-300 scale-105 shadow-sm'
                 : 'bg-amber-200 border-amber-400 ring-2 ring-amber-300 scale-105 shadow-sm'
               : isHighContrast
-              ? 'bg-slate-800 border-slate-700 opacity-70 hover:opacity-100'
-              : 'bg-stone-100/80 border-stone-200 opacity-70 hover:opacity-100'
+              ? 'bg-slate-800 border-slate-700 hover:bg-slate-700'
+              : 'bg-stone-100/80 border-stone-200 hover:bg-stone-200'
           }`}
         >
-          <Headphones className={`w-6 h-6 ${isHighContrast ? 'text-amber-300' : 'text-amber-800'}`} />
-          <span className={`text-[11px] font-extrabold ${isHighContrast ? 'text-white' : 'text-stone-900'}`}>
+          <Headphones
+            className={`w-6 h-6 ${
+              sensoryState === 'alerta'
+                ? isHighContrast ? 'text-slate-950' : 'text-amber-800'
+                : isHighContrast ? 'text-amber-400' : 'text-amber-800'
+            }`}
+          />
+          <span
+            className={`text-[11px] font-extrabold ${
+              sensoryState === 'alerta'
+                ? isHighContrast ? 'text-slate-950' : 'text-stone-900'
+                : isHighContrast ? 'text-white' : 'text-stone-900'
+            }`}
+          >
             Sobrecarga
           </span>
         </button>
 
         {/* Batería Baja */}
         <button
+          type="button"
           onClick={() => handleStateChange('fatiga')}
           className={`flex-1 py-3 px-2 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
             sensoryState === 'fatiga'
               ? isHighContrast
-                ? 'bg-rose-900 border-rose-500 ring-2 ring-rose-400 scale-105 shadow-sm'
+                ? 'bg-rose-500 border-rose-300 ring-2 ring-rose-300 scale-105 shadow-sm'
                 : 'bg-rose-200 border-rose-400 ring-2 ring-rose-300 scale-105 shadow-sm'
               : isHighContrast
-              ? 'bg-slate-800 border-slate-700 opacity-70 hover:opacity-100'
-              : 'bg-stone-100/80 border-stone-200 opacity-70 hover:opacity-100'
+              ? 'bg-slate-800 border-slate-700 hover:bg-slate-700'
+              : 'bg-stone-100/80 border-stone-200 hover:bg-stone-200'
           }`}
         >
-          <BatteryLow className={`w-6 h-6 ${isHighContrast ? 'text-rose-300' : 'text-rose-700'}`} />
-          <span className={`text-[11px] font-extrabold ${isHighContrast ? 'text-white' : 'text-stone-900'}`}>
+          <BatteryLow
+            className={`w-6 h-6 ${
+              sensoryState === 'fatiga'
+                ? isHighContrast ? 'text-slate-950' : 'text-rose-700'
+                : isHighContrast ? 'text-rose-400' : 'text-rose-700'
+            }`}
+          />
+          <span
+            className={`text-[11px] font-extrabold ${
+              sensoryState === 'fatiga'
+                ? isHighContrast ? 'text-slate-950' : 'text-stone-900'
+                : isHighContrast ? 'text-white' : 'text-stone-900'
+            }`}
+          >
             Batería baja
           </span>
         </button>
