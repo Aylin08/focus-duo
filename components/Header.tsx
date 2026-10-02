@@ -1,7 +1,18 @@
-import React from 'react';
-import { School, ClipboardList } from 'lucide-react';
+'use client';
 
-export const Header: React.FC = () => {
+import React from 'react';
+import { School, ClipboardList, User } from 'lucide-react';
+import { Student } from '@/types/user';
+
+interface HeaderProps {
+  activeStudent?: Student | null;
+  onOpenStudentManager?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({
+  activeStudent,
+  onOpenStudentManager,
+}) => {
   return (
     <header className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4 border-b border-stone-200">
       <div>
@@ -18,10 +29,23 @@ export const Header: React.FC = () => {
           Plataforma de acompañamiento por grados y cuidado neuroafirmativo
         </p>
       </div>
-      <button className="inline-flex items-center gap-2 bg-amber-200 hover:bg-amber-300 text-stone-950 border border-amber-400 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm cursor-pointer">
-        <ClipboardList className="w-4 h-4 text-stone-800" />
-        Inscripciones & Valoraciones
-      </button>
+
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* Botón para seleccionar/gestionar alumno o hijo */}
+        <button
+          onClick={onOpenStudentManager}
+          className="inline-flex items-center gap-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-950 border border-indigo-300 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+        >
+          <User className="w-4 h-4 text-indigo-800" />
+          <span>{activeStudent ? activeStudent.name : 'Seleccionar Alumno'}</span>
+        </button>
+
+        {/* Tu botón original de Inscripciones & Valoraciones */}
+        <button className="inline-flex items-center gap-2 bg-amber-200 hover:bg-amber-300 text-stone-950 border border-amber-400 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm cursor-pointer">
+          <ClipboardList className="w-4 h-4 text-stone-800" />
+          Inscripciones & Valoraciones
+        </button>
+      </div>
     </header>
   );
 };
