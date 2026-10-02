@@ -10,7 +10,8 @@ import { HealthTracker } from '../components/HealthTracker';
 import { SensoryTrafficLight } from '../components/SensoryTrafficLight';
 import { VisualSupports } from '../components/VisualSupports';
 import { TaskList } from '../components/TaskList';
-import { SensorTimer } from '../components/SensorTimer'; // 1. Importación agregada
+import { SensorTimer } from '../components/SensorTimer';
+import { SensoryCalmModule } from '@/components/SensoryCalmModule';
 
 export default function Home() {
   const [selectedGrade, setSelectedGrade] = useState('1er-grado');
@@ -74,15 +75,17 @@ export default function Home() {
           />
           <HealthTracker isHighContrast={isHighContrast} />
           <SensoryTrafficLight isHighContrast={isHighContrast} />
-          
-          {/* 2. Temporizador Sensorial agregado en la grilla */}
           <SensorTimer isHighContrast={isHighContrast} />
 
+          {/* Rutina del Día (Columna Izquierda) */}
           <TaskList 
             gradeTitle={currentGradeInfo?.label || selectedGrade} 
             tasks={currentGradeInfo?.tasks || currentGradeInfo?.rutina}
             onToggleTask={handleToggleTask}
           />
+
+          {/* Estrategias de Calma (Columna Derecha / Ocupa el hueco) */}
+          <SensoryCalmModule isHighContrast={isHighContrast} />
         </div>
 
         {/* Apoyos Visuales */}
