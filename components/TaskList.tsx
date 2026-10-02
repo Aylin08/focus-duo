@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ClipboardList, Check } from 'lucide-react';
 
 interface TaskListProps {
@@ -27,17 +27,33 @@ export const TaskList: React.FC<TaskListProps> = ({
   // Estado interno para alternar la selección localmente si no hay manejador global
   const [localCompleted, setLocalCompleted] = useState<Record<string | number, boolean>>({});
 
+  // Cargar tareas completadas guardadas al cargar el componente
+  useEffect(() => {
+    const saved = localStorage.getItem('aula_completedTasks');
+    if (saved) {
+      try {
+        setLocalCompleted(JSON.parse(saved));
+      } catch (e) {
+        console.error('Error al cargar tareas guardadas:', e);
+      }
+    }
+  }, []);
+
   const handleTaskClick = (taskId: any, currentCompleted: boolean) => {
     // Si la página principal envió la función onToggleTask, la ejecutamos
     if (onToggleTask) {
       onToggleTask(taskId);
     }
     
-    // Cambiamos el estado local para asegurar que se marque visualmente
-    setLocalCompleted((prev) => ({
-      ...prev,
-      [taskId]: !(prev[taskId] ?? currentCompleted),
-    }));
+    // Cambiamos el estado local para asegurar que se marque visualmente y persistimos
+    setLocalCompleted((prev) => {
+      const updated = {
+        ...prev,
+        [taskId]: !(prev[taskId] ?? currentCompleted),
+      };
+      localStorage.setItem('aula_completedTasks', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   return (
