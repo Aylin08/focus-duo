@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import { School, Home, BookOpen, MessageSquare, User } from 'lucide-react';
 import { AppSection, UserProfile } from '../types/user';
 
@@ -17,11 +19,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   onChangeUser,
   isHighContrast = false,
 }) => {
+  const isTherapist = user?.role === 'terapeuta';
+
+  // Si el usuario cambia a terapeuta y estaba en una sección no permitida, enviarlo a refuerzo
+  useEffect(() => {
+    if (isTherapist && (activeSection === 'aula' || activeSection === 'hogar')) {
+      setActiveSection('refuerzo');
+    }
+  }, [isTherapist, activeSection, setActiveSection]);
+
   const navItems = [
-    { id: 'aula' as AppSection, label: 'Aula & Terapia', icon: School },
-    { id: 'hogar' as AppSection, label: 'Hogar & Vida Diaria', icon: Home },
-    { id: 'refuerzo' as AppSection, label: 'Rincón de Refuerzo', icon: BookOpen },
-    { id: 'comunicacion' as AppSection, label: 'Escuela-Familia', icon: MessageSquare },
+    { id: 'aula' as AppSection, label: 'Aula & Terapia', icon: School, disabled: isTherapist },
+    { id: 'hogar' as AppSection, label: 'Hogar & Vida Diaria', icon: Home, disabled: isTherapist },
+    { id: 'refuerzo' as AppSection, label: 'Rincón de Refuerzo', icon: BookOpen, disabled: false },
+    { id: 'comunicacion' as AppSection, label: 'Escuela-Familia', icon: MessageSquare, disabled: false },
   ];
 
   return (
@@ -34,17 +45,23 @@ export const Navbar: React.FC<NavbarProps> = ({
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
+            const isDisabled = item.disabled;
+
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveSection(item.id)}
-                className={`px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-2 transition cursor-pointer ${
-                  isActive
+                disabled={isDisabled}
+                onClick={() => !isDisabled && setActiveSection(item.id)}
+                className={`px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-2 transition ${
+                  isDisabled
+                    ? 'opacity-35 cursor-not-allowed text-stone-400 dark:text-slate-600'
+                    : isActive
                     ? isHighContrast
                       ? 'bg-amber-400 text-slate-950 shadow-sm'
                       : 'bg-indigo-600 text-white shadow-sm'
-                    : 'hover:bg-stone-100 dark:hover:bg-slate-800 text-stone-600 dark:text-slate-300'
+                    : 'hover:bg-stone-100 dark:hover:bg-slate-800 text-stone-600 dark:text-slate-300 cursor-pointer'
                 }`}
+                title={isDisabled ? 'Sección no disponible para Terapeuta' : item.label}
               >
                 <Icon className="w-4 h-4" />
                 <span>{item.label}</span>

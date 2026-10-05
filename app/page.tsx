@@ -16,7 +16,7 @@ import { SessionReportModal } from '../components/SessionReportModal';
 import { HomeModule } from '../components/HomeModule';
 import { Navbar } from '../components/Navbar';
 import { LoginModal } from '../components/LoginModal';
-import { AppSection, UserProfile, UserRole, Student } from '../types/user';
+import { AppSection, UserProfile, UserRole } from '../types/user';
 import { ReinforcementModule } from '../components/ReinforcementModule';
 import { SchoolFamilyChannel } from '@/components/SchoolFamilyChannel';
 
@@ -31,7 +31,7 @@ export default function Home() {
   const [isHighContrast, setIsHighContrast] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  // Nuevos estados para Módulos y Usuario
+  // Estados para Módulos y Usuario
   const [activeSection, setActiveSection] = useState<AppSection>('aula');
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -98,7 +98,7 @@ export default function Home() {
         isHighContrast={isHighContrast}
       />
 
-      {/* Barra de Accesibilidad con Botón Integrado */}
+      {/* Barra de Accesibilidad */}
       <div className="max-w-4xl mx-auto my-4">
         <AccessibilityToolbar
           isDyslexic={isDyslexic}
@@ -111,16 +111,14 @@ export default function Home() {
         />
       </div>
 
-      {/* VISTA 1: Módulo de Aula & Terapia (Todo lo que ya programaste) */}
+      {/* VISTA 1: Módulo de Aula & Terapia */}
       {activeSection === 'aula' && (
         <>
-          {/* Selector de Grados */}
           <GradeSelector
             selectedGrade={selectedGrade}
             onSelectGrade={handleSelectGrade}
           />
 
-          {/* Contenido Principal de Aula */}
           <div className="max-w-4xl mx-auto space-y-5 mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
               <GradeInfoCard
@@ -131,7 +129,6 @@ export default function Home() {
               <SensoryTrafficLight isHighContrast={isHighContrast} />
               <SensorTimer isHighContrast={isHighContrast} />
 
-              {/* Rutina del Día (Columna Izquierda) */}
               <TaskList 
                 gradeTitle={currentGradeInfo?.label || selectedGrade} 
                 tasks={currentGradeInfo?.tasks || currentGradeInfo?.rutina}
@@ -139,11 +136,9 @@ export default function Home() {
                 isHighContrast={isHighContrast}
               />
 
-              {/* Estrategias de Calma (Columna Derecha) */}
               <SensoryCalmModule isHighContrast={isHighContrast} />
             </div>
 
-            {/* Apoyos Visuales */}
             <div className="w-full">
               <VisualSupports isHighContrast={isHighContrast} />
             </div>
@@ -151,14 +146,13 @@ export default function Home() {
         </>
       )}
 
-     
       {/* VISTA 2: Módulo de Hogar & Vida Diaria */}
       {activeSection === 'hogar' && (
         <HomeModule isHighContrast={isHighContrast} />
       )}
-  
-       {/* VISTA 3: Rincón de Refuerzo & Habilidades */}
-        {activeSection === 'refuerzo' && (
+
+      {/* VISTA 3: Rincón de Refuerzo & Habilidades */}
+      {activeSection === 'refuerzo' && (
         <ReinforcementModule isHighContrast={isHighContrast} />
       )}
 

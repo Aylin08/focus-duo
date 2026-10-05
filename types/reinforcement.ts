@@ -1,4 +1,5 @@
-export type Category = 'academico' | 'lenguaje' | 'social';
+// En src/types/reinforcement.ts
+export type Category = 'academico' | 'lenguaje' | 'social' | 'autonomia';
 
 export interface AcademicTask {
   id: string;
