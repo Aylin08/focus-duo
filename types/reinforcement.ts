@@ -22,3 +22,10 @@ export interface SocialStory {
   steps: string;
   speechText: string;
 }
+export interface CustomAssignment {
+  id: string;
+  category: Category;
+  subject: string;
+  title: string;
+  stars: number;
+}
