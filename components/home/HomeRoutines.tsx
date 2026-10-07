@@ -24,7 +24,7 @@ export const HomeRoutines: React.FC<HomeRoutinesProps> = ({
   const [activeTab, setActiveTab] = useState<'manana' | 'tarde' | 'noche'>('manana');
   const [newRoutineText, setNewRoutineText] = useState('');
   const { speak } = useSpeech();
-  const { canManageHomeRoutines } = useUser();
+ 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

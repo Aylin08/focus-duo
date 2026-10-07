@@ -31,15 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
-        {/* Botón para seleccionar/gestionar alumno o hijo */}
-        <button
-          onClick={onOpenStudentManager}
-          className="inline-flex items-center gap-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-950 border border-indigo-300 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm cursor-pointer"
-        >
-          <User className="w-4 h-4 text-indigo-800" />
-          <span>{activeStudent ? activeStudent.name : 'Seleccionar Alumno'}</span>
-        </button>
-
+       
         {/* Tu botón original de Inscripciones & Valoraciones */}
         <button className="inline-flex items-center gap-2 bg-amber-200 hover:bg-amber-300 text-stone-950 border border-amber-400 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm cursor-pointer">
           <ClipboardList className="w-4 h-4 text-stone-800" />
