@@ -9,6 +9,7 @@ interface NavbarProps {
   setActiveSection: (section: AppSection) => void;
   user: UserProfile | null;
   onChangeUser: () => void;
+  onOpenProfile?: () => void; // <--- Agregado para el Modal de Perfil
   isHighContrast?: boolean;
 }
 
@@ -17,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveSection,
   user,
   onChangeUser,
+  onOpenProfile, // <--- Recibimos la función
   isHighContrast = false,
 }) => {
   const isTherapist = user?.role === 'terapeuta';
@@ -70,15 +72,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Perfil Actual */}
+        {/* Perfil Actual (Abre la ventana de Configuración de Perfil) */}
         {user && (
           <button
-            onClick={onChangeUser}
+            onClick={onOpenProfile || onChangeUser}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border ${
               isHighContrast
                 ? 'border-slate-700 hover:bg-slate-800 text-amber-300'
                 : 'border-stone-200 hover:bg-stone-100 text-stone-700'
             }`}
+            title="Abrir configuración de perfil"
           >
             <User className="w-3.5 h-3.5" />
             <span className="capitalize">{user.name} ({user.role})</span>

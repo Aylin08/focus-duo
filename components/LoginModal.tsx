@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { UserRole, UserProfile } from '../types/user';
+import { supabase } from '../lib/supabaseClient';
 import { 
   ShieldCheck, 
   HeartHandshake, 
@@ -15,7 +16,8 @@ import {
   User, 
   Eye, 
   EyeOff,
-  CheckCircle2
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 
 interface LoginModalProps {
@@ -55,10 +57,6 @@ const ROLES: { id: UserRole; title: string; description: string; icon: React.Rea
   },
 ];
 
-interface RegisteredAccount extends UserProfile {
-  password?: string;
-}
-
 export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onSelectRole, isHighContrast }) => {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [selectedRole, setSelectedRole] = useState<UserRole>('docente');
@@ -71,20 +69,17 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onSelectRole, is
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  // Mensajes de estado (error o éxito)
+  // Estado de carga y mensajes
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
-
-    // Obtener cuentas guardadas en localStorage
-    const existingUsersRaw = localStorage.getItem('aula_registeredUsers');
-    const registeredUsers: RegisteredAccount[] = existingUsersRaw ? JSON.parse(existingUsersRaw) : [];
 
     if (mode === 'register') {
       // Validaciones de Registro
@@ -93,11 +88,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onSelectRole, is
         return;
       }
       if (!email.trim()) {
-        setError('Por favor ingresa un correo o nombre de usuario.');
+        setError('Por favor ingresa tu correo electrónico.');
         return;
       }
-      if (!password || password.length < 4) {
-        setError('La contraseña debe tener al menos 4 caracteres.');
+      if (!password || password.length < 6) {
+        setError('La contraseña debe tener al menos 6 caracteres.');
         return;
       }
       if (password !== confirmPassword) {
@@ -105,63 +100,94 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onSelectRole, is
         return;
       }
 
-      // Validar si ya existe la cuenta
-      const userExists = registeredUsers.some(
-        (u) => u.email?.toLowerCase() === email.trim().toLowerCase()
-      );
+      setLoading(true);
 
-      if (userExists) {
-        setError('Este correo o usuario ya está registrado. Por favor inicia sesión.');
+      // 1. Registrar usuario en Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password: password,
+      });
+
+      if (authError) {
+        setLoading(false);
+        setError(authError.message || 'Error al registrar el usuario.');
         return;
       }
 
-      // Crear nuevo usuario
-      const newUser: RegisteredAccount = {
-        id: Date.now().toString(),
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        role: selectedRole,
-        password: password,
-      };
+      if (authData.user) {
+        // 2. Crear registro en la tabla public.profiles
+        const userProfile: UserProfile = {
+          id: authData.user.id,
+          name: name.trim(),
+          email: email.trim(),
+          role: selectedRole,
+        };
 
-      registeredUsers.push(newUser);
-      localStorage.setItem('aula_registeredUsers', JSON.stringify(registeredUsers));
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([{
+            id: authData.user.id,
+            name: userProfile.name,
+            email: userProfile.email,
+            role: userProfile.role,
+          }]);
 
-      const { password: _, ...userProfile } = newUser;
+        if (profileError) {
+          console.error('Error al guardar el perfil:', profileError);
+        }
 
-      // Notificación de Éxito al Crear Usuario
-      setSuccessMessage('¡Usuario registrado exitosamente! Iniciando sesión...');
-      
-      setTimeout(() => {
-        onSelectRole(userProfile);
-      }, 1200);
+        setSuccessMessage('¡Usuario registrado exitosamente en Supabase! Iniciando sesión...');
+        setLoading(false);
 
+        setTimeout(() => {
+          onSelectRole(userProfile);
+        }, 1200);
+      }
     } else {
       // Validaciones de Iniciar Sesión
       if (!email.trim() || !password) {
-        setError('Por favor ingresa tu correo/usuario y tu contraseña.');
+        setError('Por favor ingresa tu correo y contraseña.');
         return;
       }
 
-      const matchedUser = registeredUsers.find(
-        (u) =>
-          u.email?.toLowerCase() === email.trim().toLowerCase() &&
-          u.password === password
-      );
+      setLoading(true);
 
-      if (!matchedUser) {
-        setError('Usuario o contraseña incorrectos. Si no tienes cuenta, regístrate.');
+      // 1. Iniciar sesión con Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password,
+      });
+
+      if (authError) {
+        setLoading(false);
+        setError('Correo o contraseña incorrectos. Verifica tus datos o regístrate.');
         return;
       }
 
-      const { password: _, ...userProfile } = matchedUser;
+      if (authData.user) {
+        // 2. Traer los datos del perfil guardado en Supabase
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authData.user.id)
+          .single();
 
-      // Notificación de Datos Correctos al Ingresar
-      setSuccessMessage('¡Datos correctos! Ingresando a la plataforma...');
-      
-      setTimeout(() => {
-        onSelectRole(userProfile);
-      }, 1000);
+        const loggedUser: UserProfile = {
+          id: authData.user.id,
+          name: profileData?.name || authData.user.email?.split('@')[0] || 'Usuario',
+          email: authData.user.email,
+          role: profileData?.role || 'docente',
+          avatar: profileData?.avatar,
+          grade: profileData?.grade,
+        };
+
+        setSuccessMessage('¡Datos correctos! Ingresando a la plataforma...');
+        setLoading(false);
+
+        setTimeout(() => {
+          onSelectRole(loggedUser);
+        }, 1000);
+      }
     }
   };
 
@@ -237,7 +263,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onSelectRole, is
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nombre completo (Registro) */}
+          {/* Nombre completo (Solo Registro) */}
           {mode === 'register' && (
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider mb-1 opacity-75">
@@ -260,15 +286,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onSelectRole, is
             </div>
           )}
 
-          {/* Correo o Usuario */}
+          {/* Correo Electrónico */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider mb-1 opacity-75">
-              Correo Electrónico o Usuario:
+              Correo Electrónico:
             </label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
               <input
-                type="text"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ejemplo@correo.com"
@@ -281,7 +307,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onSelectRole, is
             </div>
           </div>
 
-          {/* Contraseña con Ojo */}
+          {/* Contraseña */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider mb-1 opacity-75">
               Contraseña:
@@ -382,11 +408,17 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onSelectRole, is
           {/* Botón de Enviar */}
           <button
             type="submit"
-            disabled={!!successMessage}
+            disabled={loading || !!successMessage}
             className="w-full mt-2 py-3 px-4 rounded-2xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white shadow-md hover:shadow-lg transition cursor-pointer flex items-center justify-center gap-2"
           >
-            <UserCheck className="w-5 h-5" />
-            {mode === 'login' ? 'Ingresar a la Plataforma' : 'Crear Cuenta e Ingresar'}
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <>
+                <UserCheck className="w-5 h-5" />
+                {mode === 'login' ? 'Ingresar a la Plataforma' : 'Crear Cuenta e Ingresar'}
+              </>
+            )}
           </button>
         </form>
       </div>
