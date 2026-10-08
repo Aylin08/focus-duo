@@ -3,7 +3,7 @@ import React from 'react';
 import { SessionReportModal } from './SessionReportModal';
 import { LoginModal } from './LoginModal';
 import { StudentManagerModal } from './StudentManagerModal';
-import ProfileModal from '@/components/ProfileModal';
+import { ProfileModal } from './ProfileModal';
 import { Student, UserProfile, UserRole } from '../types/user';
 
 interface AppModalsProps {
@@ -21,6 +21,7 @@ interface AppModalsProps {
   activeStudent: Student | null;
   handleSelectRole: (profile: UserProfile) => void;
   handleSelectStudent: (student: Student) => void;
+  onUpdateUser: (updatedUser: UserProfile) => void; // 👈 Agregado
 }
 
 export const AppModals: React.FC<AppModalsProps> = ({
@@ -38,6 +39,7 @@ export const AppModals: React.FC<AppModalsProps> = ({
   activeStudent,
   handleSelectRole,
   handleSelectStudent,
+  onUpdateUser, // 👈 Agregado
 }) => {
   return (
     <>
@@ -66,7 +68,9 @@ export const AppModals: React.FC<AppModalsProps> = ({
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        userProfile={user}
+        user={user}
+        onUpdateUser={onUpdateUser} // 👈 Agregado
+        isHighContrast={isHighContrast} // 👈 Agregado
       />
     </>
   );

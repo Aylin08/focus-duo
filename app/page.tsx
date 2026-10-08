@@ -38,9 +38,18 @@ export default function Home() {
     }
   }, [user, activeSection]);
 
+  // Sincronizar el grado automáticamente según el perfil del usuario o alumno activo
+  useEffect(() => {
+    if (user?.role === 'estudiante' && user.grade) {
+      setSelectedGrade(user.grade);
+    } else if (activeStudent?.grade) {
+      setSelectedGrade(activeStudent.grade);
+    }
+  }, [user, activeStudent]);
+
   useEffect(() => {
     const savedGrade = localStorage.getItem('aula_selectedGrade');
-    if (savedGrade && (GRADE_DATA as Record<string, any>)[savedGrade]) {
+    if (savedGrade && (GRADE_DATA as Record<string, any>)[savedGrade] && user?.role !== 'estudiante') {
       setSelectedGrade(savedGrade);
     }
 
@@ -149,6 +158,7 @@ export default function Home() {
           activeStudent={activeStudent}
           isHighContrast={isHighContrast}
           onToggleTask={(id) => console.log('Tarea:', id)}
+          userRole={user?.role} // 👈 Pasa el rol para controlar la vista del selector
         />
       )}
 
@@ -184,6 +194,7 @@ export default function Home() {
           setActiveStudent(student);
           localStorage.setItem('aula_activeStudent', JSON.stringify(student));
         }}
+        onUpdateUser={(updatedUser) => setUser(updatedUser)}
       />
     </main>
   );
