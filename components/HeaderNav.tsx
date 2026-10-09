@@ -102,11 +102,17 @@ export const HeaderNav: React.FC = () => {
       </header>
 
       {/* Ventana Modal del Perfil */}
-      <ProfileModal
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        userProfile={adaptedProfile}
-      />
+{adaptedProfile && (
+  <ProfileModal
+    isOpen={isProfileOpen}
+    onClose={() => setIsProfileOpen(false)}
+    user={adaptedProfile}
+    onUpdateUser={(updatedUser) => {
+      // Lógica para actualizar el usuario en el contexto/estado local
+      console.log('Usuario actualizado:', updatedUser);
+    }}
+  />
+)}
     </>
   );
 };

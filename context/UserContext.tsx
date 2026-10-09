@@ -22,6 +22,7 @@ interface UserContextType {
   canSelectStudent: boolean;
   canReceiveRealTimeAlerts: boolean;
   alerts: any[];
+  markAlertAsRead: (id: string) => void; // 👈 Agregado a la interfaz
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -36,7 +37,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [studentsList] = useState<Student[]>(DEFAULT_STUDENTS);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(DEFAULT_STUDENTS[0]);
-  const [alerts] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]); // 👈 Convertido a estado mutable
 
   // Cargar usuario guardado al iniciar
   useEffect(() => {
@@ -74,6 +75,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('focus_duo_user', JSON.stringify(updated));
   };
 
+  // Función para marcar alertas como leídas
+  const markAlertAsRead = (id: string) => {
+    setAlerts((prevAlerts) =>
+      prevAlerts.map((alert) =>
+        alert.id === id ? { ...alert, read: true } : alert
+      )
+    );
+  };
+
   // Permisos según el rol
   const role = currentUser?.role?.toLowerCase();
   const canSelectStudent = role === 'docente' || role === 'terapeuta' || role === 'familia';
@@ -93,6 +103,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         canSelectStudent,
         canReceiveRealTimeAlerts,
         alerts,
+        markAlertAsRead, // 👈 Expuesto en el contexto
       }}
     >
       {children}
