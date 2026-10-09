@@ -11,6 +11,7 @@ interface AntiForgotListProps {
   onToggle: (id: string) => void;
   onAdd: (name: string) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
+  isStudent?: boolean; // 👈 Prop agregada para verificar si es estudiante
 }
 
 export const AntiForgotList: React.FC<AntiForgotListProps> = ({
@@ -19,6 +20,7 @@ export const AntiForgotList: React.FC<AntiForgotListProps> = ({
   onToggle,
   onAdd,
   onDelete,
+  isStudent = false,
 }) => {
   const [newMemoryText, setNewMemoryText] = useState('');
   const { speak } = useSpeech();
@@ -48,22 +50,25 @@ export const AntiForgotList: React.FC<AntiForgotListProps> = ({
         Cosas esenciales para revisar antes de salir de casa o cambiar de actividad.
       </p>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-3">
-        <input
-          type="text"
-          value={newMemoryText}
-          onChange={(e) => setNewMemoryText(e.target.value)}
-          placeholder="Nuevo recordatorio..."
-          className="flex-1 px-3 py-1.5 text-xs rounded-xl border dark:bg-slate-800 dark:border-slate-700 outline-none"
-        />
-        <button
-          type="submit"
-          className="p-1.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition"
-          title="Agregar Recordatorio"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
-      </form>
+      {/* Formulario de Agregar Recordatorio (Oculto si es estudiante) */}
+      {!isStudent && (
+        <form onSubmit={handleSubmit} className="flex gap-2 mb-3">
+          <input
+            type="text"
+            value={newMemoryText}
+            onChange={(e) => setNewMemoryText(e.target.value)}
+            placeholder="Nuevo recordatorio..."
+            className="flex-1 px-3 py-1.5 text-xs rounded-xl border dark:bg-slate-800 dark:border-slate-700 outline-none"
+          />
+          <button
+            type="submit"
+            className="p-1.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition cursor-pointer"
+            title="Agregar Recordatorio"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </form>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-1">
         {memoryList.map((item) => (
@@ -82,7 +87,7 @@ export const AntiForgotList: React.FC<AntiForgotListProps> = ({
               <button
                 type="button"
                 onClick={(e) => handleSpeak(item.name, e)}
-                className="p-1 text-inherit opacity-80 hover:opacity-100 transition"
+                className="p-1 text-inherit opacity-80 hover:opacity-100 transition cursor-pointer"
                 title="Escuchar"
               >
                 <Volume2 className="w-3.5 h-3.5" />
@@ -92,14 +97,18 @@ export const AntiForgotList: React.FC<AntiForgotListProps> = ({
 
             <div className="flex items-center gap-1">
               {item.checked && <CheckCircle2 className="w-4 h-4 text-white shrink-0" />}
-              <button
-                type="button"
-                onClick={(e) => onDelete(item.id, e)}
-                className="p-1 opacity-70 hover:opacity-100 hover:text-rose-400 transition"
-                title="Eliminar"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
+
+              {/* Botón Eliminar (Oculto si es estudiante) */}
+              {!isStudent && (
+                <button
+                  type="button"
+                  onClick={(e) => onDelete(item.id, e)}
+                  className="p-1 opacity-70 hover:opacity-100 hover:text-rose-400 transition cursor-pointer"
+                  title="Eliminar"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
         ))}

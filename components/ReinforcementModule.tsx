@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Trophy } from 'lucide-react';
 import { Category, CustomAssignment } from '@/types/reinforcement';
-import { useUser } from '@/context/UserContext';
+import { UserProfile, Student } from '@/types/user';
 import { useReinforcementTasks } from '../hooks/useReinforcementTasks';
 import { TherapistPanel } from './TherapistPanel';
 import { CategoryTabs } from './CategoryTabs';
@@ -11,12 +11,20 @@ import { TaskCard } from './TaskCard';
 
 interface ReinforcementModuleProps {
   isHighContrast?: boolean;
+  user?: UserProfile | null;
+  activeStudent?: Student | null;
 }
 
-export const ReinforcementModule: React.FC<ReinforcementModuleProps> = ({ isHighContrast = false }) => {
+export const ReinforcementModule: React.FC<ReinforcementModuleProps> = ({
+  isHighContrast = false,
+  user,
+  activeStudent,
+}) => {
   const [activeCategory, setActiveCategory] = useState<Category>('academico');
-  const { currentUser } = useUser();
-  const isTherapist = currentUser?.role === 'terapeuta';
+
+  // Permite gestión tanto a Docentes como a Terapeutas según la prop user
+  const canManageTasks = user?.role === 'docente' || user?.role === 'terapeuta';
+  const isStudent = user?.role === 'estudiante';
 
   const { assignments, completedTasks, points, toggleTask, addAssignment, deleteAssignment } = useReinforcementTasks();
 
@@ -24,18 +32,37 @@ export const ReinforcementModule: React.FC<ReinforcementModuleProps> = ({ isHigh
     ? 'bg-slate-900 border-slate-700 text-white'
     : 'bg-white border-stone-200 text-stone-800';
 
-  const categoryAssignments = assignments.filter((a) => a.category === activeCategory);
+  // Filtrar asignaciones por categoría y por destinatario (Grupo / Alumno)
+  const categoryAssignments = assignments.filter((a) => {
+    if (a.category !== activeCategory) return false;
+
+    // Si es ESTUDIANTE: solo ve tareas para su grado (general) o dirigidas a su ID (individual)
+    if (isStudent) {
+      const isMyGrade = user?.grade ? a.grade === user.grade : true;
+      const isForMe = a.assignmentType === 'general' || a.studentId === user?.id;
+      return isMyGrade && isForMe;
+    }
+
+    // Si el Docente/Terapeuta seleccionó un alumno activo en sesión
+    if (activeStudent) {
+      const isForActiveStudent = a.assignmentType === 'general' || a.studentId === activeStudent.id;
+      return (a.grade === activeStudent.grade || !a.grade) && isForActiveStudent;
+    }
+
+    return true;
+  });
 
   const groupedSubjects = categoryAssignments.reduce((acc, curr) => {
-    if (!acc[curr.subject]) acc[curr.subject] = [];
-    acc[curr.subject].push(curr);
+    const subjectKey = curr.subject || 'Refuerzo General';
+    if (!acc[subjectKey]) acc[subjectKey] = [];
+    acc[subjectKey].push(curr);
     return acc;
   }, {} as Record<string, CustomAssignment[]>);
 
   return (
     <div className="max-w-4xl mx-auto mt-6 space-y-6">
-      {/* Panel Terapéutico */}
-      {isTherapist && (
+      {/* Panel de Gestión (Docente y Terapeuta) */}
+      {canManageTasks && (
         <TherapistPanel
           cardBgClass={cardBgClass}
           onAdd={addAssignment}
@@ -69,7 +96,7 @@ export const ReinforcementModule: React.FC<ReinforcementModuleProps> = ({ isHigh
                     item={item}
                     isCompleted={completedTasks.includes(item.id)}
                     activeCategory={activeCategory}
-                    isTherapist={isTherapist}
+                    isTherapist={canManageTasks}
                     onToggle={toggleTask}
                     onDelete={deleteAssignment}
                   />

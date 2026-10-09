@@ -158,12 +158,26 @@ export default function Home() {
           activeStudent={activeStudent}
           isHighContrast={isHighContrast}
           onToggleTask={(id) => console.log('Tarea:', id)}
-          userRole={user?.role} // 👈 Pasa el rol para controlar la vista del selector
+          userRole={user?.role}
         />
       )}
 
-      {activeSection === 'hogar' && <HomeModule isHighContrast={isHighContrast} />}
-      {activeSection === 'refuerzo' && <ReinforcementModule isHighContrast={isHighContrast} />}
+      {/* Pasa userRole a HomeModule */}
+      {activeSection === 'hogar' && (
+        <HomeModule
+          isHighContrast={isHighContrast}
+          userRole={user?.role}
+        />
+      )}
+
+      {/* Actualizado con props user y activeStudent */}
+      {activeSection === 'refuerzo' && (
+        <ReinforcementModule
+          isHighContrast={isHighContrast}
+          user={user}
+          activeStudent={activeStudent}
+        />
+      )}
       
       {/* Solo renderiza la sección si NO es estudiante */}
       {activeSection === 'comunicacion' && user?.role !== 'estudiante' && (

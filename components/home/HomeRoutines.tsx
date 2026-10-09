@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Sun, Coffee, Moon, Plus, Volume2, CheckCircle2, Circle, Trash2 } from 'lucide-react';
 import { RoutineItem } from '@/types/home';
 import { useSpeech } from '@/hooks/useSpeech';
-import { useUser } from '@/context/UserContext';
 
 interface HomeRoutinesProps {
   routines: RoutineItem[];
@@ -12,6 +11,7 @@ interface HomeRoutinesProps {
   onToggle: (id: string) => void;
   onAdd: (text: string, timeOfDay: 'manana' | 'tarde' | 'noche') => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
+  isStudent?: boolean; // 👈 Prop para identificar si es estudiante
 }
 
 export const HomeRoutines: React.FC<HomeRoutinesProps> = ({
@@ -20,11 +20,11 @@ export const HomeRoutines: React.FC<HomeRoutinesProps> = ({
   onToggle,
   onAdd,
   onDelete,
+  isStudent = false,
 }) => {
   const [activeTab, setActiveTab] = useState<'manana' | 'tarde' | 'noche'>('manana');
   const [newRoutineText, setNewRoutineText] = useState('');
   const { speak } = useSpeech();
- 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,23 +76,25 @@ export const HomeRoutines: React.FC<HomeRoutinesProps> = ({
         ))}
       </div>
 
-      {/* Formulario de Agregar (siempre visible o según canManageHomeRoutines) */}
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-4 pb-3 border-b border-stone-100 dark:border-slate-800">
-        <input
-          type="text"
-          value={newRoutineText}
-          onChange={(e) => setNewRoutineText(e.target.value)}
-          placeholder="Nueva rutina..."
-          className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 transition"
-        />
-        <button
-          type="submit"
-          className="p-2 bg-amber-400 text-stone-950 rounded-xl hover:bg-amber-500 transition cursor-pointer font-bold shrink-0"
-          title="Agregar Tarea"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
-      </form>
+      {/* Formulario de Agregar (Oculto si es estudiante) */}
+      {!isStudent && (
+        <form onSubmit={handleSubmit} className="flex gap-2 mb-4 pb-3 border-b border-stone-100 dark:border-slate-800">
+          <input
+            type="text"
+            value={newRoutineText}
+            onChange={(e) => setNewRoutineText(e.target.value)}
+            placeholder="Nueva rutina..."
+            className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 transition"
+          />
+          <button
+            type="submit"
+            className="p-2 bg-amber-400 text-stone-950 rounded-xl hover:bg-amber-500 transition cursor-pointer font-bold shrink-0"
+            title="Agregar Tarea"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+        </form>
+      )}
 
       {/* Lista de Rutinas */}
       <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
@@ -134,14 +136,17 @@ export const HomeRoutines: React.FC<HomeRoutinesProps> = ({
                   <Circle className="w-4.5 h-4.5 text-stone-300 dark:text-slate-600" />
                 )}
 
-                <button
-                  type="button"
-                  onClick={(e) => onDelete(item.id, e)}
-                  className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer"
-                  title="Eliminar"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                {/* Botón Eliminar (Oculto si es estudiante) */}
+                {!isStudent && (
+                  <button
+                    type="button"
+                    onClick={(e) => onDelete(item.id, e)}
+                    className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer"
+                    title="Eliminar"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
           ))

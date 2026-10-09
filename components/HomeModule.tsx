@@ -5,9 +5,11 @@ import { RoutineItem, MemoryItem } from '@/types/home';
 import { HomeRoutines } from './home/HomeRoutines';
 import { AntiForgotList } from './home/AntiForgotList';
 import { SosLocation } from './home/SosLocation';
+import { UserRole } from '@/types/user';
 
 interface HomeModuleProps {
   isHighContrast?: boolean;
+  userRole?: UserRole; // 👈 Prop agregada para recibir el rol
 }
 
 const DEFAULT_MEMORY: MemoryItem[] = [
@@ -27,9 +29,14 @@ const DEFAULT_ROUTINES: RoutineItem[] = [
   { id: 'r7', text: 'Dejar ropa lista para mañana', completed: false, timeOfDay: 'noche' },
 ];
 
-export const HomeModule: React.FC<HomeModuleProps> = ({ isHighContrast = false }) => {
+export const HomeModule: React.FC<HomeModuleProps> = ({ 
+  isHighContrast = false,
+  userRole 
+}) => {
   const [memoryList, setMemoryList] = useState<MemoryItem[]>(DEFAULT_MEMORY);
   const [routines, setRoutines] = useState<RoutineItem[]>(DEFAULT_ROUTINES);
+
+  const isStudent = userRole === 'estudiante'; // 👈 Validación del rol
 
   useEffect(() => {
     const savedMemory = localStorage.getItem('aula_home_memory');
@@ -88,6 +95,7 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ isHighContrast = false }
           onToggle={toggleRoutineItem}
           onAdd={addRoutineItem}
           onDelete={deleteRoutineItem}
+          isStudent={isStudent} // 👈 Pasamos la bandera al subcomponente
         />
 
         {/* Bloque 2 y 3: Anti-Olvidos y Geolocalización */}
@@ -98,6 +106,7 @@ export const HomeModule: React.FC<HomeModuleProps> = ({ isHighContrast = false }
             onToggle={toggleMemoryItem}
             onAdd={addMemoryItem}
             onDelete={deleteMemoryItem}
+            isStudent={isStudent} // 👈 Pasamos la bandera al subcomponente
           />
           <SosLocation isHighContrast={isHighContrast} />
         </div>
